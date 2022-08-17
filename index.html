@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<html>
+    <script>
+        function prepare(){
+            //load();
+
+           //set date to datum in form send_values
+           // TODO
+            
+            
+        }
+        //send data to DB
+        function send() {
+            // Creating the XMLHttpRequest object
+            var request = new XMLHttpRequest();
+            
+            // Instantiating the request object
+            var req = "send.php";
+            request.open("POST", req);
+
+            // Defining event listener for readystatechange event
+            request.onreadystatechange = function() {
+                // Check if the request is compete and was successful
+                if(this.readyState === 4 && this.status === 200) {
+                    // Inserting the response from server into an HTML element
+                   
+                    load();
+                    
+                }
+            };
+            //get month and year from form load form
+            
+            
+            
+            var work = new Date('8:00:00');
+            var d_od = new Date(document.getElementById("od").value);
+            var d_do = new Date(document.getElementById("do").value);
+
+            var diff = d_do - d_od;
+
+            if (diff == work) {
+               hodiny = 8;
+               prescas = 0;
+            }
+
+            else {
+                hodiny = Math.floor(diff / (1000 * 60 * 60));
+                prescas = diff % (1000 * 60 * 60);
+            }
+
+            alert(hodiny + " hodin  " + prescas + " prescas");
+            
+            var data = new FormData();
+            data.append("datum", document.getElementById("datum").value);
+            data.append("od",   document.getElementById("od").value);
+            data.append("do",  document.getElementById("do").value);
+            data.append("pohotovost", document.getElementById("pohotovost").checked);
+            data.append("stavba", document.getElementById("stavba").value);
+            data.append("hodiny", hodiny);
+            data.append("prescas", prescas);
+
+            request.send(data);
+        }
+
+            
+        //load table from DB
+        function load() {
+            // Creating the XMLHttpRequest object
+            var request = new XMLHttpRequest();
+            
+            // Instantiating the request object
+            var req = "load.php";
+            request.open("POST", req);
+
+            // Defining event listener for readystatechange event
+            request.onreadystatechange = function() {
+                // Check if the request is compete and was successful
+                if(this.readyState === 4 && this.status === 200) {
+                    // Inserting the response from server into an HTML element
+                   
+                    document.getElementById("Table_hodiny").innerHTML = this.responseText;
+                    
+                }
+            };
+            //get month and year from form load form
+            
+            var d = new Date( document.getElementById("month").value );
+
+            //get last day in month
+            var today = new Date();
+            var lastDayOfMonth = new Date(today.getFullYear(), today.getMonth()+1, 0);
+
+            //get first day in month
+            var data = new FormData();
+            if(d.getMonth < 10){
+                data.append("month", "0" + d.getMonth()+1);
+            }
+            else{
+                data.append("month", d.getMonth()+1);
+            }
+            data.append("year", d.getFullYear());
+            data.append("dayH", lastDayOfMonth.getDate());
+            request.send(data);
+        }
+    </script>
+
+    
+    <head>
+        <title>
+            Hodiny
+        </title>
+    </head>
+
+    <link rel="stylesheet" href="style.css">
+
+    <body>
+        <br><br><br><br><br>
+
+        <form id="send_values">
+            <label for="datum">datum</label>
+            <input type="date" name="datum" id="datum">
+
+            <label for="od">OD</label>
+            <input type="time" name="od" id="od">
+
+            <label for="do">DO</label>
+            <input type="time" name="do" id="do">
+
+            <label for="pohotovost">pohotovost</label>
+            <input type="checkbox" name="pohotovost" id="pohotovost">
+
+            <label for="stavba">Název stavby</label>
+            <input type="text" name="stavba" id="stavba">
+
+            <input type="button" value="Odeslat" onclick="send()">
+
+        </form>
+
+        <form method="get" id="load_form">
+
+            <label for="month">Vykazovaný měsíc</label>
+            <input type="month" name="month" id="month">
+            
+            <input type="button" value="Vyhledat" onclick="load()">
+        </form>
+
+        <br>
+
+
+        <div id="Table_hodiny">
+
+
+        </div>
+ 
+
+    </body>
+</html>

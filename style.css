@@ -1,0 +1,21 @@
+input.long{
+    width: 22%;
+}
+
+table, th, td {
+    border: 2px solid black;
+    border-collapse: collapse;
+}
+
+table{
+    width: 100%;
+    
+}
+
+td{
+    text-align: center;
+}
+
+tr:hover {
+    background-color: red;
+}
